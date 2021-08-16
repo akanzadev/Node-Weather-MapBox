@@ -1,8 +1,9 @@
 const axios = require("axios");
 const config = require("../config/config");
 class Busquedas {
-  /* historial = ["Tegucigalpa", "Madrid"]; */
-  constructor() {}
+  constructor() {
+    this.historial = ["Tegucigalpa", "Madrid"];
+  }
   async ciudad(lugar = "") {
     try {
       // Configurar axios
@@ -54,6 +55,14 @@ class Busquedas {
       console.log(error);
       return [];
     }
+  }
+  agregarHistorial(lugar = "") {
+    // Prevenir duplicados
+    if (this.historial.includes(lugar.toLocaleLowerCase())) {
+      return;
+    }
+    this.historial.unshift(lugar.toLocaleLowerCase());
+    // Grabar en DB
   }
 }
 module.exports = Busquedas;
