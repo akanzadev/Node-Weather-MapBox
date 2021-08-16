@@ -1,9 +1,23 @@
+const fs = require("fs");
 const axios = require("axios");
 const config = require("../config/config");
 class Busquedas {
   constructor() {
-    this.historial = ["Tegucigalpa", "Madrid"];
+    this.historial = [];
+    this.dbPath = "./db/database.json";
+    this.leerDB();
   }
+
+  get historialCapitalizado() {
+    // Capitalizar historial
+    return this.historial.map((lugar) => {
+      const res = lugar
+        .split(" ")
+        .map((palabra) => palabra[0].toUpperCase() + palabra.slice(1));
+      return res.join(" ");
+    });
+  }
+
   async ciudad(lugar = "") {
     try {
       // Configurar axios
@@ -58,11 +72,29 @@ class Busquedas {
   }
   agregarHistorial(lugar = "") {
     // Prevenir duplicados
-    if (this.historial.includes(lugar.toLocaleLowerCase())) {
+    if (this.historial.includes(lugar.toLowerCase())) {
       return;
     }
-    this.historial.unshift(lugar.toLocaleLowerCase());
+    this.historial = this.historial.splice(0, 5);
+    this.historial.unshift(lugar.toLowerCase());
     // Grabar en DB
+    this.guardarDB();
+  }
+
+  guardarDB() {
+    const payload = {
+      historial: this.historial,
+    };
+    fs.writeFileSync(this.dbPath, JSON.stringify(payload));
+  }
+  leerDB() {
+    // Debe existir el archivo
+    if (!fs.existsSync(this.dbPath)) return;
+    // Leer el archivo
+    const { historial } = JSON.parse(
+      fs.readFileSync(this.dbPath, { encoding: "utf8" })
+    );
+    this.historial = historial;
   }
 }
 module.exports = Busquedas;

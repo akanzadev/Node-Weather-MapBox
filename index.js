@@ -21,14 +21,14 @@ const main = async () => {
         if (id === "0") continue;
 
         const lugarSel = lugares.find((l) => l.id === id);
-
         // Guardar en db
-        busquedas.agregarHistorial(lugarSel);
+        busquedas.agregarHistorial(lugarSel.nombre);
 
         // Clima
         const clima = await busquedas.climaLugar(lugarSel.lat, lugarSel.lng);
         // Mostrar información
-        console.log("\nInformación de la ciudad".green);
+        console.clear();
+        console.log("\nInformación de la ciudad\n".green);
         console.log("Ciudad:", lugarSel.nombre);
         console.log("Lat:", lugarSel.lat);
         console.log("Lng:", lugarSel.lng);
@@ -40,7 +40,7 @@ const main = async () => {
       }
       case 2: {
         // Historial
-        busquedas.historial.forEach((lugar, i) => {
+        busquedas.historialCapitalizado.forEach((lugar, i) => {
           const idx = `${i + 1}.`.green;
           console.log(`${idx} ${lugar}`);
         });
